@@ -10,8 +10,8 @@ import logging
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger()
 app.secret_key = config('SECRET_KEY', default='sua_chave_secreta') # Necessário para sessões
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -332,8 +332,10 @@ def register():
             return redirect(url_for('login'))  # Redireciona para a página de login
 
         except mysql.connector.Error as err:
+            logger.exception(f"Erro no banco de dados: {err}")
             flash(f"Erro no banco de dados: {err}", 'error')
         except Exception as e:
+            logger.exception(f"Ocorreu um erro: {e}")
             flash(f"Ocorreu um erro: {e}", 'error')
 
     return render_template('register.html')
