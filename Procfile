@@ -1,1 +1,1 @@
-web: python tela_inicial.py
+web: gunicorn tela_inicial:app
