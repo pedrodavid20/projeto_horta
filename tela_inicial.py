@@ -10,7 +10,7 @@ import logging
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 app.secret_key = config('SECRET_KEY', default='sua_chave_secreta') # Necessário para sessões
 login_manager = LoginManager()
