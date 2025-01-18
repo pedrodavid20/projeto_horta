@@ -201,7 +201,8 @@ def pedidos_realizados():
     except Exception as e:
         logger.error(f"Erro ao consultar os pedidos: {e}", exc_info=True)
         return "Erro no servidor", 500
-
+    
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username_or_email = request.form.get('username')
