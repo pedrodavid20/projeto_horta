@@ -6,16 +6,17 @@ import mysql.connector
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from decouple import config
 
 # Função para conectar ao banco de dados
 def connect_db():
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="der@G6am09858!?",
-            database="dados_pedidos"
-        )
+        conn = {
+            'host': config('DB_HOST', default='localhost'),
+            'user': config('DB_USER', default='root'),
+            'password': config('DB_PASSWORD', default='senha_padrao'),
+            'database': config('DB_NAME', default='dados_pedidos')
+        }
         return conn
     except mysql.connector.Error as err:
         print(f"Erro ao conectar ao banco de dados: {err}")
@@ -147,7 +148,7 @@ def redefinir_senha(user_id):
 
 # Função para enviar o e-mail com a nova senha
 def enviar_email(usuario_email, senha_temporaria, corpo_html):
-    remetente = "pedrodvd012@gmail.com"
+    remetente = "suportehotalicas@gmail.com"
     destinatario = usuario_email
     assunto = "Sua Nova Senha Temporária"
 
