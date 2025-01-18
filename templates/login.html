@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faça seu Pedido</title>
+    <style>
+        /* Estilos existentes da página de login */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+        .alert {
+            background-color: #f44336; /* Cor de fundo vermelha */
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+        
+        /* Estilo do campo de senha com ícone de olho */
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-container input[type="password"] {
+            padding-left: 10px; /* Espaço para o ícone de olho */
+        }
+
+        .eye-icon {
+            position: absolute;
+            left: 367px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #4CAF50;
+            cursor: pointer;
+        }
+    </style>
+    <!-- Adicionando Font Awesome para o ícone de olho -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <!-- Tela de Login -->
+    <div class="container" id="loginContainer">
+        <h1>Login</h1>
+        
+        <!-- Exibe as mensagens de erro, se houver -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert">
+                    {% for category, message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <label for="username">Nome de usuário ou e-mail:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Senha:</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" required>
+                <i class="fas fa-eye eye-icon" id="togglePassword"></i> <!-- Ícone de olho -->
+            </div>
+            
+            <button type="submit">Entrar</button>
+        </form>
+        <br>
+        <a href="#" id="registroBtn">Ainda não tem conta? Clique aqui para se registrar</a>
+    </div>
+
+    <script>
+        // Alternar visibilidade da senha
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.type === 'password' ? 'text' : 'password';
+            passwordField.type = type;
+            this.classList.toggle('fa-eye-slash'); // Muda o ícone para "olho cortado"
+        });
+
+        // Quando clicar no botão de registro
+        document.getElementById("registroBtn").onclick = function() {
+            window.location.href = '/register'; // Redireciona para a página de registro
+        };
+    </script>
+
+</body>
+</html>

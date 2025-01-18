@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome -->
+    <title>Faça seu Pedido</title>
+    <style>
+        /* Estilos existentes */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://i.im.ge/2025/01/03/zzdtfK.IMG-7570.jpeg');  /* Substitua pelo caminho correto da imagem */
+            background-attachment: fixed;
+            background-size: 50%;
+            background-position: bottom;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            padding-top: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100%;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #4CAF50;
+            text-align: left;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+
+        form {
+            background-color: rgba(255, 255, 255, 0.9);  /* Fundo semitransparente para contraste */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin-top: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .quantidade {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .alface-opcoes {
+            display: none;
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .checkbox-group {
+            margin-top: 15px;
+        }
+
+        .checkbox-wrapper {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos para a modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal button {
+            width: 48%;
+            margin: 5px;
+        }
+
+        /* Tabela na modal */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        input.erro {
+            border: 2px solid red;  /* Borda vermelha */
+            background-color: #f8d7da;  /* Fundo vermelho claro */
+        }
+
+        #mensagem_erro {
+            display: none; /* Inicialmente escondido */
+            background-color: #f8d7da; /* Fundo vermelho claro */
+            color: #721c24; /* Cor do texto */
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb; /* Borda vermelha clara */
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        #mensagem_erro strong {
+            font-weight: bold;
+        }
+
+         /* Barra Lateral */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 80px; /* Largura padrão */
+            background-color: #333;
+            color: white;
+            padding-top: 20px;
+            transition: width 0.3s ease; /* Transição suave ao expandir */
+            z-index: 1000;
+        }
+
+        .sidebar:hover {
+            width: 250px; /* Largura expandida ao passar o mouse */
+        }
+
+        /* Logo */
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar .logo img {
+            width: 80px; /* Largura da logo */
+            height: 80px; /* Altura da logo */
+            border-radius: 50%; /* Moldura redonda */
+            border: 2px solid transparent; /* Moldura invisível */
+            object-fit: cover; /* Ajusta a imagem para cobrir toda a área */
+            transition: border-color 0.3s ease; /* Transição suave quando o mouse passa */
+        }
+
+        /* Exemplo de mudança de cor da borda quando o mouse passa */
+        .sidebar .logo img:hover {
+            border-color: #3498db; /* Cor da moldura visível ao passar o mouse */
+        }
+
+        /* Links da Barra Lateral */
+        .sidebar a {
+            color: white;
+            padding: 10px 16px; /* Reduzi o padding lateral para caber melhor */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Garante alinhamento correto do ícone e texto */
+            width: 100%; /* Torna o link clicável em toda a largura da barra */
+            transition: background-color 0.3s;
+            cursor: pointer; /* Aponta que é clicável */
+        }
+
+        /* Mostrar ícones e texto */
+        .sidebar i {
+            font-size: 1.5em; /* Tamanho do ícone */
+            margin-right: 5px;
+        }
+
+        /* Ocultar texto quando a barra for pequena */
+        .sidebar .text {
+            display: none;
+        }
+
+        .sidebar:hover .text {
+            display: inline-block;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        /* Estilo do conteúdo da página */
+        .content {
+            margin-left: 80px; /* Espaço para a barra lateral */
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar:hover + .content {
+            margin-left: 250px; /* Ajuste do conteúdo quando a barra expande */
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 180px;
+            }
+
+            .content {
+                margin-left: 60px;
+            }
+
+            .sidebar:hover + .content {
+                margin-left: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <!-- Substitua 'logo.png' pelo caminho da sua imagem -->
+            <img src="https://i.im.ge/2025/01/09/zJH95c.logo-projeto-1.jpeg" alt="Logo">
+        </div>
+        <a href="#">
+            <i class="fas fa-home"></i>
+            <span class="text">Home</span>
+        </a>
+        <a href="{{ url_for('pedidos_realizados') }}">
+            <i class="fas fa-box"></i>
+            <span class="text">Pedidos</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-cogs"></i>
+            <span class="text">Configurações</span>
+        </a>
+        <!-- Botão de Usuários, visível apenas para Admins -->
+        {% if role == 'Admin' %}
+        <a href="{{ url_for('usuarios') }}">
+            <i class="fas fa-users"></i>
+            <span class="text">Usuários</span>
+        </a>
+        {% endif %}
+        <a href="javascript:void(0)" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="text">Sair</span>
+        </a>
+    </div>
+
+    <form id="pedidoForm" action="/realizar_pedido" method="POST">
+
+        <!-- Mensagem de erro -->
+        <div id="mensagem_erro">
+            <strong>Erro:</strong> <span id="erro_lista"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="user_name">Usuário:</label>
+            <!-- Preencher o campo com o nome do usuário passado pelo Flask -->
+            <input type="text" id="nome_cliente" name="nome_cliente" value="{{ user_name }}" readonly>
+            <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}" readonly>
+        </div>
+
+        <div class="checkbox-group">
+            <h2><label for="itens">Itens Disponíveis:</label></h2>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="alface" name="itens[]" value="alface" onchange="mostrarOpcoesAlface()">
+                <label for="alface">Alface</label>
+            </div>
+        </div>
+
+        <div id="alface_opcoes" class="alface-opcoes">
+            <div class="form-group checkbox-wrapper">
+                <input type="checkbox" id="alface_crespa" name="itens[]" value="alface_crespa" onchange="mostrarQuantidade('alface_crespa')">
+                <label for="alface_crespa">Alface Crespa</label>
+                <div id="quantidade_alface_crespa" class="quantidade">
+                    <label for="quantidade_alface_crespa_input">Quantidade:</label>
+                    <input type="number" id="quantidade_alface_crespa_input" name="quantidade[alface_crespa]" min="1" value="">
+                </div>
+            </div>
+
+            <div class="form-group checkbox-wrapper">
+                <input type="checkbox" id="alface_lisa" name="itens[]" value="alface_lisa" onchange="mostrarQuantidade('alface_lisa')">
+                <label for="alface_lisa">Alface Lisa</label>
+                <div id="quantidade_alface_lisa" class="quantidade">
+                    <label for="quantidade_alface_lisa_input">Quantidade:</label>
+                    <input type="number" id="quantidade_alface_lisa_input" name="quantidade[alface_lisa]" min="1" value="">
+                </div>
+            </div>
+
+            <div class="form-group checkbox-wrapper">
+                <input type="checkbox" id="alface_mimosa" name="itens[]" value="alface_mimosa" onchange="mostrarQuantidade('alface_mimosa')">
+                <label for="alface_mimosa">Alface Mimosa</label>
+                <div id="quantidade_alface_mimosa" class="quantidade">
+                    <label for="quantidade_alface_mimosa_input">Quantidade:</label>
+                    <input type="number" id="quantidade_alface_mimosa_input" name="quantidade[alface_mimosa]" min="1" value="">
+                </div>
+            </div>
+
+            <div class="form-group checkbox-wrapper">
+                <input type="checkbox" id="alface_americana" name="itens[]" value="alface_americana" onchange="mostrarQuantidade('alface_americana')">
+                <label for="alface_americana">Alface Americana</label>
+                <div id="quantidade_alface_americana" class="quantidade">
+                    <label for="quantidade_alface_americana_input">Quantidade:</label>
+                    <input type="number" id="quantidade_alface_americana_input" name="quantidade[alface_americana]" min="1" value="">
+                </div>
+            </div>
+        </div>
+
+        <!-- Itens adicionais -->
+        <div class="form-group checkbox-wrapper">
+            <input type="checkbox" id="coentro" name="itens[]" value="coentro" onchange="mostrarQuantidade('coentro')">
+            <label for="coentro">Coentro</label>
+            <div id="quantidade_coentro" class="quantidade">
+                <label for="quantidade_coentro_input">Quantidade:</label>
+                <input type="number" id="quantidade_coentro_input" name="quantidade[coentro]" min="1" value="">
+            </div>
+        </div>
+
+        <div class="form-group checkbox-wrapper">
+            <input type="checkbox" id="cebolinha" name="itens[]" value="cebolinha" onchange="mostrarQuantidade('cebolinha')">
+            <label for="cebolinha">Cebolinha</label>
+            <div id="quantidade_cebolinha" class="quantidade">
+                <label for="quantidade_cebolinha_input">Quantidade:</label>
+                <input type="number" id="quantidade_cebolinha_input" name="quantidade[cebolinha]" min="1" value="">
+            </div>
+        </div>
+
+        <div class="form-group checkbox-wrapper">
+            <input type="checkbox" id="salsinha" name="itens[]" value="salsinha" onchange="mostrarQuantidade('salsinha')">
+            <label for="salsinha">Salsinha</label>
+            <div id="quantidade_salsinha" class="quantidade">
+                <label for="quantidade_salsinha_input">Quantidade:</label>
+                <input type="number" id="quantidade_salsinha_input" name="quantidade[salsinha]" min="1" value="">
+            </div>
+        </div>
+
+        <button type="button" onclick="mostrarConfirmacao()">Enviar Pedido</button>
+    </form>
+
+    <!-- Modal de confirmação -->
+    <div id="modalConfirmacao" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>Confirme seu Pedido</h2>
+            <p id="confirmacaoNome"></p>
+            <p>Para garantirmos que seu pedido será feito corretamente, pedimos que verifique os itens abaixo:</p>
+            <table id="confirmacaoTabela">
+                <!-- Itens e quantidades serão preenchidos aqui -->
+            </table>
+            <button type="submit" form="pedidoForm">Confirmar</button>
+            <button onclick="fecharModal()">Voltar e Editar</button>
+        </div>
+    </div>
+
+    <script>
+        window.localStorage.setItem('user_id', '{{ user_id }}');
+        window.localStorage.setItem('user_name', '{{ user_name }}');
+
+        var userRole = "{{ role }}";  // Variável `role` passada pelo Flask
+        console.log("Papel do usuário:", userRole);
+
+        // Salvando no localStorage
+        if (userRole) {
+            window.localStorage.setItem('user_role', userRole);
+        }
+
+        // Função para mostrar as opções de alface
+        function mostrarOpcoesAlface() {
+            var alfaceCheckbox = document.getElementById('alface');
+            var alfaceOpcoes = document.getElementById('alface_opcoes');
+            alfaceOpcoes.style.display = alfaceCheckbox.checked ? 'block' : 'none';
+        }
+    
+        // Função para mostrar a quantidade quando o item for selecionado
+        function mostrarQuantidade(item) {
+            var quantidadeDiv = document.getElementById("quantidade_" + item);
+            var checkbox = document.getElementById(item);
+            var quantidadeInput = document.getElementById("quantidade_" + item + "_input");
+    
+            // Exibir ou ocultar o campo de quantidade
+            if (checkbox.checked) {
+                quantidadeDiv.style.display = 'block';
+                quantidadeInput.setAttribute('required', 'required');  // Tornar o campo obrigatório
+            } else {
+                quantidadeDiv.style.display = 'none';
+                quantidadeInput.removeAttribute('required');  // Remover a obrigatoriedade
+            }
+        }
+    
+        // Função para mostrar a confirmação
+        function mostrarConfirmacao() {
+            // Limpar qualquer erro anterior
+            var tabela = document.getElementById("confirmacaoTabela");
+            tabela.innerHTML = '';  // Limpar a tabela antes de preenchê-la
+
+            // Remover a classe de erro de todos os campos antes da validação
+            var quantidadeInputs = document.querySelectorAll('input[type="number"]');
+            quantidadeInputs.forEach(function(input) {
+                input.classList.remove('erro');
+            });
+
+            var camposInvalidos = false;
+            var erros = [];  // Array para armazenar os erros
+
+            // Verificar se o campo de nome está vazio (nome do cliente)
+            var nomeInput = document.getElementById("nome_cliente");
+            var nome = nomeInput ? nomeInput.value : '';  // Pega o valor do nome cliente
+            if (nome === "") {
+                camposInvalidos = true;
+                nomeInput.classList.add('erro');  // Adicionar a classe 'erro' ao campo nome
+                erros.push("'Nome do cliente' não pode estar vazio.");
+            }
+
+            // Verificar se os campos de quantidade estão válidos apenas para os itens selecionados
+            var itens = document.querySelectorAll('input[type="checkbox"]:checked');
+            itens.forEach(function(item) {
+                var itemNome = item.id;  // Nome do item selecionado (ID do checkbox)
+
+                // Ignorar a "Alface" (sem adicionar na tabela)
+                if (itemNome === "alface") {
+                    return;  // Ignorar a iteração para "Alface"
+                }
+
+                // Obter a div e o campo de quantidade para o item
+                var quantidadeDiv = document.getElementById("quantidade_" + itemNome);  // Div de quantidade do item
+                var quantidadeInput = document.getElementById("quantidade_" + itemNome + "_input");  // Campo de quantidade
+
+                // Verificar se a quantidade do item está visível e não é zero
+                if (quantidadeDiv && quantidadeDiv.style.display !== 'none') {
+                    var valorQuantidade = quantidadeInput.value;
+                    if (valorQuantidade === "" || valorQuantidade == 0) {
+                        camposInvalidos = true;
+                        quantidadeInput.classList.add('erro');  // Adicionar a classe 'erro' ao campo com erro
+                        erros.push("Quantidade de " + item.nextElementSibling.innerText + " não pode ser 0 ou vazio.");
+                    }
+                }
+
+                // Se o campo de quantidade for válido, adicionar o item na tabela de confirmação
+                if (quantidadeDiv && quantidadeDiv.style.display !== 'none' && valorQuantidade > 0) {
+                    // Criar a linha da tabela
+                    var row = tabela.insertRow();
+                    var cell1 = row.insertCell(0);  // Coluna 1 (nome do item)
+                    var cell2 = row.insertCell(1);  // Coluna 2 (quantidade)
+
+                    cell1.innerText = item.nextElementSibling.innerText;  // Nome do item
+                    cell2.innerText = valorQuantidade;  // Quantidade do item
+                }
+            });
+
+            // Se houver erros, mostrar na página
+            if (camposInvalidos) {
+                document.getElementById('erro_lista').innerHTML = erros.join('<br>');
+                document.getElementById('mensagem_erro').style.display = 'block';
+                return;  // Não exibir a modal de confirmação se houver erros
+            }
+
+            // Se tudo estiver ok, esconder a mensagem de erro
+            document.getElementById('mensagem_erro').style.display = 'none';
+
+            // Exibir a modal de confirmação
+            document.getElementById("modalConfirmacao").style.display = "block";
+        }
+
+        // Fechar a modal
+        function fecharModal() {
+            document.getElementById("modalConfirmacao").style.display = "none";
+        }
+    
+        // Confirmar o pedido e enviar os dados
+        function confirmarPedido() {
+            document.getElementById("pedidoForm").submit();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtendo os valores do localStorage
+            const user = {
+                id: localStorage.getItem('user_id') || '',  // ID do usuário
+                name: localStorage.getItem('user_name') || ''  // Nome do usuário
+            };
+
+            // Exibindo o nome do usuário na barra
+            const userNameDisplay = document.getElementById('user_name_display');
+            if (userNameDisplay) {
+                userNameDisplay.textContent = `Olá, ${user.name || 'Usuário'}`;  // Exibe "Olá, <nome>"
+            }
+
+            // Exibindo o ID do usuário no console (se necessário)
+            console.log(`ID do usuário: ${user.id}`);
+            console.log(`Nome do usuário: ${user.name}`);
+        });
+
+        function logout() {
+            // Remove os itens do localStorage
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('user_name');
+
+            // Redireciona para a página de login após o logout
+            window.location.href = '/login';  
+        }
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

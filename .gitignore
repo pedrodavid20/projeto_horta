@@ -1,0 +1,12 @@
+# Ignorar arquivos de configuração sensíveis
+.env
+
+# Ignorar diretórios comuns
+__pycache__/
+*.pyc
+
+# Ignorar configurações locais do VS Code
+.vscode/
+
+# Ignorar logs
+*.log

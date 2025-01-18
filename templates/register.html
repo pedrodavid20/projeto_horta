@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Conta</title>
+    <style>
+        /* Estilos existentes da página de login */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+        .alert {
+            background-color: #f44336; /* Cor de fundo vermelha */
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Registrar Conta</h1>
+        
+        <!-- Exibe as mensagens de erro, se houver -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert">
+                    {% for category, message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST">
+            <input type="text" name="username" placeholder="Nome de usuário" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Senha" required>
+            <input type="password" name="confirm_password" placeholder="Confirmar Senha" required>
+            <button type="submit">Registrar</button>
+        </form>
+        <br>
+        <a href="/">Já tem conta? Faça login</a>
+    </div>
+
+</body>
+</html>
