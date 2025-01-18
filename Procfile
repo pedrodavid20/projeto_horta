@@ -1,1 +1,1 @@
-web: python app.py
+web: python tela_inicial.py
