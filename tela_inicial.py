@@ -202,7 +202,6 @@ def pedidos_realizados():
         logger.error(f"Erro ao consultar os pedidos: {e}", exc_info=True)
         return "Erro no servidor", 500
 
-@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username_or_email = request.form.get('username')
@@ -214,31 +213,30 @@ def login():
         
         try:
             conn = connect_db()
-            cursor = conn.cursor()
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT id, username, password, role_id FROM usuarios WHERE username = %s OR email = %s", 
+                               (username_or_email, username_or_email))
+                user_data = cursor.fetchone()
 
-            cursor.execute("SELECT id, username, password, role_id FROM usuarios WHERE username = %s OR email = %s", 
-                           (username_or_email, username_or_email))
-            user_data = cursor.fetchone()
+                if user_data and check_password_hash(user_data[2], password):  # Verifica a senha
+                    user = User(user_data[0], user_data[1], user_data[2], user_data[3])  # Cria um objeto User
+                    login_user(user)  # Faz login do usuário
 
-            if user_data and check_password_hash(user_data[2], password):  # Verifica a senha
-                user = User(user_data[0], user_data[1], user_data[2], user_data[3])  # Cria um objeto User
-                login_user(user)  # Faz login do usuário
+                    session['user_id'] = user.id
+                    session['user_name'] = user.username
 
-                session['user_id'] = user.id
-                session['user_name'] = user.username
-
-                return redirect(url_for('home'))
-            else:
-                flash("Nome de usuário ou senha incorretos.", 'error')
-                return redirect(url_for('login'))
+                    return redirect(url_for('home'))
+                else:
+                    flash("Nome de usuário ou senha incorretos.", 'error')
+                    return redirect(url_for('login'))
 
         except Exception as e:
             flash("Erro ao tentar autenticar. Tente novamente mais tarde.", 'error')
             return redirect(url_for('login'))
         
         finally:
-            cursor.close()
-            conn.close()
+            if conn:
+                conn.close()  # Fecha a conexão ao banco
 
     return render_template('login.html')
 
