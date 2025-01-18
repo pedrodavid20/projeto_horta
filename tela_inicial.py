@@ -65,7 +65,7 @@ def connect_db():
         )
         return conn
     except Exception as e:
-        logger.error(f"Erro ao conectar ao banco de dados: {e}", exec_info=True)
+        logger.error(f"Erro ao conectar ao banco de dados: {e}")
         traceback.print_exc()
         return None
 
