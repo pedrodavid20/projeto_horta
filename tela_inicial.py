@@ -80,7 +80,7 @@ def reset_password(user_id):
         logger.info(f"Chamando subprocesso para redefinir senha do usuário {user_id}")
         
         # Caminho para o script redefinir_senha.py
-        script_path = r'C:\Users\pedro\OneDrive\Documentos\Projeto_Horta\redefinir_senha.py'
+        script_path = 'redefinir_senha.py'
 
         # Chama o script via subprocess
         result = subprocess.run(
